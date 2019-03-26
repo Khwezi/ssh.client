@@ -11,6 +11,11 @@ namespace ssh.client.library.tests
     {
         private proxy Client { get; set; }
 
+        private string CurrentPath
+        {
+            get => Path.GetDirectoryName(Path.GetDirectoryName(TestContext.CurrentContext.TestDirectory));
+        }
+
         [SetUp]
         public void Init() => Client = new proxy();
 
@@ -53,26 +58,25 @@ namespace ssh.client.library.tests
             });
         }
 
-        [TestCase(1, @"Samples\small-file.txt")]
-        //[TestCase(@"Samples\large-file.txt")]
-        public void SSHClient_PublishFile(int position, string filePath)
+        [TestCase(@"Samples\small-file.txt")]
+        [TestCase(@"Samples\large-file.txt")]
+        public void SSHClient_PublishFile(string filePath)
         {
-            SetClientDetails("localhost", "sshuser", "12345", filePath);
+            SetClientDetails("localhost", "sshuser", "12345", @"Samples\client - key.bkp");
 
-            var fileStream = new FileStream(filePath, FileMode.Open);
-            var result = Client.Send(Path.GetFileName(filePath), fileStream);
+            Client.Connect();
+            Assert.That(Client.Connected, Is.True);
+
+            var fullPath = FindRealPath(filePath);
+            var fileStream = new FileStream(fullPath, FileMode.Open);
+            var result = Client.Send(fullPath, fileStream);
 
             Assert.That(result, Is.True);
         }
 
         #region Helpers
-        private string FindRealPath(string path)
-        {
-            var realPath = path;
-            if (!string.IsNullOrEmpty(path)) realPath = Path.GetFullPath(path);
 
-            return realPath;
-        }
+        private string FindRealPath(string path) => Path.Combine(CurrentPath, path);
 
         private void SetClientDetails(string host, string username, string password, string filePath)
         {

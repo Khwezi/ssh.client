@@ -45,7 +45,7 @@ namespace ssh.client.library
             }
         }
 
-        public bool Send(string fileName, Stream data)
+        public bool Send(string filePath, Stream data)
         {
             if(data == null)
                 throw new ArgumentException("Specify file to be sent.");
@@ -54,8 +54,8 @@ namespace ssh.client.library
                 throw new ArgumentException("The file is empty");
 
             ulong bytesUploaded = 0;
-            Client.ChangeDirectory("/");
-            Client.UploadFile(data, fileName, (length) => bytesUploaded = length);
+            Client.ChangeDirectory(@"C:\Users\Khwezi\Desktop");
+            Client.UploadFile(data, Path.GetFileName(filePath), (length) => bytesUploaded = length);
 
             return bytesUploaded >= (ulong)data.Length;
         }
