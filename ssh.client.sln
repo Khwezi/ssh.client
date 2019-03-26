@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssh.client", "ssh.client\ssh.client.csproj", "{5B7EC4C3-A763-4F5C-9317-E7BCEF62AC1D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssh.client.library.tests", "ssh.client.library.tests\ssh.client.library.tests.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssh.client.library", "ssh.client.library\ssh.client.library.csproj", "{CABD8282-C507-4A29-AB28-D6C889A0E329}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B7EC4C3-A763-4F5C-9317-E7BCEF62AC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B7EC4C3-A763-4F5C-9317-E7BCEF62AC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B7EC4C3-A763-4F5C-9317-E7BCEF62AC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B7EC4C3-A763-4F5C-9317-E7BCEF62AC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CABD8282-C507-4A29-AB28-D6C889A0E329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CABD8282-C507-4A29-AB28-D6C889A0E329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CABD8282-C507-4A29-AB28-D6C889A0E329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CABD8282-C507-4A29-AB28-D6C889A0E329}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
