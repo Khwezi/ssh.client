@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -38,6 +39,30 @@ namespace ssh.client.library.tests
         {
             SetClientDetails(host, username, password, filePath);
             Assert.Throws<ArgumentException>(() => Client.Connect());
+        }
+
+        [Test]
+        public void SSHClient_InvalidCredentials_MustThrowSSHAuthenticationException()
+        {
+            SetClientDetails("localhost", "sshuser", "123456", @"Samples\client-key.bkp");
+
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<Renci.SshNet.Common.SshAuthenticationException>(() => Client.Connect());
+                Assert.That(Client.Connected, Is.False);
+            });
+        }
+
+        [TestCase(1, @"Samples\small-file.txt")]
+        //[TestCase(@"Samples\large-file.txt")]
+        public void SSHClient_PublishFile(int position, string filePath)
+        {
+            SetClientDetails("localhost", "sshuser", "12345", filePath);
+
+            var fileStream = new FileStream(filePath, FileMode.Open);
+            var result = Client.Send(Path.GetFileName(filePath), fileStream);
+
+            Assert.That(result, Is.True);
         }
 
         #region Helpers

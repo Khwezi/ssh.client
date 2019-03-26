@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.CompilerServices;
 using Renci.SshNet;
 
 namespace ssh.client.library
@@ -41,6 +43,21 @@ namespace ssh.client.library
                 Client.Dispose();
                 Connected = false;
             }
+        }
+
+        public bool Send(string fileName, Stream data)
+        {
+            if(data == null)
+                throw new ArgumentException("Specify file to be sent.");
+
+            if(data.Length == 0)
+                throw new ArgumentException("The file is empty");
+
+            ulong bytesUploaded = 0;
+            Client.ChangeDirectory("/");
+            Client.UploadFile(data, fileName, (length) => bytesUploaded = length);
+
+            return bytesUploaded >= (ulong)data.Length;
         }
 
         protected virtual void Dispose(bool disposing)
