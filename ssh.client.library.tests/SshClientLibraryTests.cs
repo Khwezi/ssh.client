@@ -26,27 +26,27 @@ namespace ssh.client.library.tests
             Client = null;
         }
 
-        [TestCase("localhost", "sshuser", "12345", "")]
-        [TestCase("localhost", "sshuser", "12345", @"Samples\client-key.bkp")]
-        public void SSHClient_KeyPasswordAuthentication(string host, string username, string password, string filePath)
+        [TestCase("localhost", "sshuser", "12345", "", "/")]
+        [TestCase("localhost", "sshuser", "12345", @"Samples\client-key.bkp", "/")]
+        public void SSHClient_KeyPasswordAuthentication(string host, string username, string password, string filePath, string workingDirectory)
         {
-            SetClientDetails(host, username, password, filePath);
+            SetClientDetails(host, username, password, filePath, workingDirectory);
 
             Assert.That(Client.Connect(), Is.True);
         }
 
-        [TestCase("localhost", "", "12345", "")]
-        [TestCase("localhost", "sshuser", "", "")]
-        public void SSHClient_IncompleteCredentials_ShouldThrowArgumentException(string host, string username, string password, string filePath)
+        [TestCase("localhost", "", "12345", "", "/")]
+        [TestCase("localhost", "sshuser", "", "", "/")]
+        public void SSHClient_IncompleteCredentials_ShouldThrowArgumentException(string host, string username, string password, string filePath, string workingDirectory)
         {
-            SetClientDetails(host, username, password, filePath);
+            SetClientDetails(host, username, password, filePath, workingDirectory);
             Assert.Throws<ArgumentException>(() => Client.Connect());
         }
 
         [Test]
         public void SSHClient_InvalidCredentials_MustThrowSSHAuthenticationException()
         {
-            SetClientDetails("localhost", "sshuser", "123456", @"Samples\client-key.bkp");
+            SetClientDetails("localhost", "sshuser", "123456", @"Samples\client-key.bkp", "/");
 
             Assert.Multiple(() =>
             {
@@ -59,7 +59,7 @@ namespace ssh.client.library.tests
         [TestCase("large-file.txt")]
         public void SSHClient_PublishFile(string name)
         {
-            SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp");
+            SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp", @"\Desktop");
 
             Client.Connect();
             Assert.That(Client.Connected, Is.True);
@@ -84,7 +84,7 @@ namespace ssh.client.library.tests
         [Test]
         public void SSHClient_Send_EmptyFile_ShouldThrowArgumentException()
         {
-            SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp");
+            SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp", "/");
 
             Client.Connect();
 
@@ -103,7 +103,7 @@ namespace ssh.client.library.tests
 
         private string FindRealPath(string path) => Path.Combine(workingDirectory, path);
 
-        private void SetClientDetails(string host, string username, string password, string filePath)
+        private void SetClientDetails(string host, string username, string password, string filePath, string workingDirectory)
         {
             var realPath = FindRealPath(filePath);
 
@@ -111,6 +111,7 @@ namespace ssh.client.library.tests
             Client.Username = username;
             Client.Password = password;
             Client.ClientKey = realPath;
+            Client.WorkingDirectory = workingDirectory;
         }
 
         private Stream ReadEmbeddedFile(string name)
