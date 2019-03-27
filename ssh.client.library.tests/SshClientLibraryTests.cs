@@ -12,8 +12,6 @@ namespace ssh.client.library.tests
     {
         private Proxy Client { get; set; }
 
-        private string workingDirectory => Path.GetDirectoryName(Path.GetDirectoryName(TestContext.CurrentContext.TestDirectory));
-
         [SetUp]
         public void Init() => Client = new Proxy();
 
@@ -106,11 +104,9 @@ namespace ssh.client.library.tests
 
         #region Helpers
 
-        private string FindRealPath(string path) => Path.Combine(workingDirectory, path);
-
         private void SetClientDetails(string host, string username, string password, string filePath, string workingDirectory)
         {
-            var realPath = FindRealPath(filePath);
+            var realPath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(TestContext.CurrentContext.TestDirectory)), filePath);
 
             Client.Host = host;
             Client.Username = username;
