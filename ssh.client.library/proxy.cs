@@ -1,6 +1,7 @@
 ﻿using Renci.SshNet;
 using System;
 using System.IO;
+using System.Xml.Schema;
 
 namespace ssh.client.library
 {
@@ -50,7 +51,7 @@ namespace ssh.client.library
             }
         }
 
-        public bool Send(string fileName, Stream dataStream)
+        public ulong Send(string fileName, Stream dataStream)
         {
             if (dataStream == null)
             {
@@ -67,16 +68,15 @@ namespace ssh.client.library
                 throw new ArgumentException("Please specify the remote working directory.");
             }
 
-            ulong bytesUploaded = 0;
-
             if (!string.IsNullOrEmpty(WorkingDirectory))
             {
                 Client.ChangeDirectory(WorkingDirectory);
             }
 
-            Client.UploadFile(dataStream, fileName, (length) => bytesUploaded = length);
+            ulong totalBytesWritten = default(ulong);
+            Client.UploadFile(dataStream, fileName, (bytesWritted) => totalBytesWritten = bytesWritted);
 
-            return bytesUploaded >= (ulong)dataStream.Length;
+            return totalBytesWritten;
         }
 
         protected virtual void Dispose(bool disposing)

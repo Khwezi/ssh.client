@@ -64,9 +64,9 @@ namespace ssh.client.library.tests
             Client.Connect();
             Assert.That(Client.Connected, Is.True);
 
-            var result = Client.Send(name, ReadEmbeddedFile(name));
+            var bytesSent = Client.Send(name, ReadEmbeddedFile(name));
 
-            Assert.That(result, Is.True);
+            Assert.That(bytesSent, Is.GreaterThanOrEqualTo(0));
         }
 
         [Test]
@@ -79,7 +79,12 @@ namespace ssh.client.library.tests
 
         [Test]
         public void SSHClient_Send_AbsentWorkingDirectory_ShouldThrowArgumentException()
-            => Assert.Throws<ArgumentException>(() => Client.Send("small-file.txt", new MemoryStream()));
+        {
+            var name = "small-file.txt";
+            var fileStream = ReadEmbeddedFile(name);
+
+            Assert.Throws<ArgumentException>(() => Client.Send(name, fileStream));
+        }
 
         [Test]
         public void SSHClient_Send_EmptyFile_ShouldThrowArgumentException()
