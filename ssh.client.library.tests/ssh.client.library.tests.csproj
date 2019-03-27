@@ -47,6 +47,9 @@
     <None Include="Samples\client-key.bkp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Samples\empty-file.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\large-file.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

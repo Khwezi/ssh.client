@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Renci.SshNet;
+using System;
 using System.IO;
-using System.Runtime.CompilerServices;
-using Renci.SshNet;
 
 namespace ssh.client.library
 {
-    public class proxy : IDisposable
+    public class Proxy : IDisposable
     {
         public string Host { get; set; }
 
@@ -15,20 +14,26 @@ namespace ssh.client.library
 
         public string ClientKey { get; set; }
 
+        public string WorkingDirectory { get; set; }
+
         private SftpClient Client { get; set; }
 
         public bool Connected { get; private set; }
 
         public bool Connect()
         {
-            if(string.IsNullOrEmpty(Username))
+            if (string.IsNullOrEmpty(Username))
+            {
                 throw new ArgumentException("Username is required.");
+            }
 
             if (string.IsNullOrEmpty(Password))
+            {
                 throw new ArgumentException("Password is required.");
+            }
 
-            Client = string.IsNullOrEmpty(ClientKey) ? 
-                new SftpClient(new ConnectionInfo(Host, Username, new PasswordAuthenticationMethod(Username, Password))) : 
+            Client = string.IsNullOrEmpty(ClientKey) ?
+                new SftpClient(new ConnectionInfo(Host, Username, new PasswordAuthenticationMethod(Username, Password))) :
                 new SftpClient(new ConnectionInfo(Host, Username, new PasswordAuthenticationMethod(Username, Password), new PrivateKeyAuthenticationMethod(ClientKey)));
 
             Client.Connect();
@@ -45,19 +50,33 @@ namespace ssh.client.library
             }
         }
 
-        public bool Send(string filePath, Stream data)
+        public bool Send(string fileName, Stream dataStream)
         {
-            if(data == null)
+            if (dataStream == null)
+            {
                 throw new ArgumentException("Specify file to be sent.");
+            }
 
-            if(data.Length == 0)
-                throw new ArgumentException("The file is empty");
+            if (dataStream.Length == 0)
+            {
+                throw new ArgumentException("The file is empty.");
+            }
+
+            if (string.IsNullOrEmpty(WorkingDirectory))
+            {
+                throw new ArgumentException("Please specify the remote working directory.");
+            }
 
             ulong bytesUploaded = 0;
-            Client.ChangeDirectory(@"C:\Users\Khwezi\Desktop");
-            Client.UploadFile(data, Path.GetFileName(filePath), (length) => bytesUploaded = length);
 
-            return bytesUploaded >= (ulong)data.Length;
+            if (!string.IsNullOrEmpty(WorkingDirectory))
+            {
+                Client.ChangeDirectory(WorkingDirectory);
+            }
+
+            Client.UploadFile(dataStream, fileName, (length) => bytesUploaded = length);
+
+            return bytesUploaded >= (ulong)dataStream.Length;
         }
 
         protected virtual void Dispose(bool disposing)
