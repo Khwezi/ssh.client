@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ssh.client.library.tests
@@ -53,26 +55,22 @@ namespace ssh.client.library.tests
             });
         }
 
-        [TestCase(@"Samples\small-file.txt")]
-        [TestCase(@"Samples\large-file.txt")]
-        public void SSHClient_PublishFile(string filePath)
+        [TestCase("small-file.txt")]
+        [TestCase("large-file.txt")]
+        public void SSHClient_PublishFile(string name)
         {
             SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp");
 
             Client.Connect();
             Assert.That(Client.Connected, Is.True);
 
-            var fullPath = FindRealPath(filePath);
-            var fileName = Path.GetFileName(fullPath);
+            var result = Client.Send(name, ReadEmbeddedFile(name));
 
-            var fileStream = new FileStream(filePath, FileMode.Open);
-            var result = Client.Send(fileName, fileStream);
-        
             Assert.That(result, Is.True);
         }
 
         [Test]
-        public void SSHClient_Send_NullDataStream_ShouldThrowArgumentException() 
+        public void SSHClient_Send_NullDataStream_ShouldThrowArgumentException()
             => Assert.Throws<ArgumentException>(() => Client.Send("small-file.txt", null));
 
         [Test]
@@ -88,18 +86,17 @@ namespace ssh.client.library.tests
         {
             SetClientDetails("localhost", "sshuser", "12345", @"Samples\client-key.bkp");
 
-            var testFilePath = "empty-file.txt";
-
             Client.Connect();
-            Assert.That(Client.Connected, Is.True);
 
-            var fullPath = FindRealPath(testFilePath);
-            var fileName = Path.GetFileName(fullPath);
+            Assert.Multiple(() =>
+            {
+                Assert.That(Client.Connected, Is.True);
 
-            var fileStream = new FileStream(testFilePath, FileMode.Open);
-            var result = Client.Send(fileName, fileStream);
-
-            Assert.That(result, Is.True);
+                var fileStream = ReadEmbeddedFile("empty-file.txt");
+                Assert.Throws<ArgumentException>(() => Client.Send("empty-file", fileStream));
+                
+                fileStream.Dispose();
+            });
         }
 
         #region Helpers
@@ -114,6 +111,14 @@ namespace ssh.client.library.tests
             Client.Username = username;
             Client.Password = password;
             Client.ClientKey = realPath;
+        }
+
+        private Stream ReadEmbeddedFile(string name)
+        {
+            var assembly = typeof(SshClientLibraryTests).GetTypeInfo().Assembly;
+            var resourceKey = assembly.GetManifestResourceNames().First(r => r.Contains(name));
+
+            return assembly.GetManifestResourceStream(resourceKey);
         }
 
         #endregion Helpers

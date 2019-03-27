@@ -47,12 +47,8 @@
     <None Include="Samples\client-key.bkp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Samples\empty-file.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\large-file.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Samples\empty-file.txt" />
+    <EmbeddedResource Include="Samples\large-file.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ssh.client.library\ssh.client.library.csproj">
@@ -64,9 +60,7 @@
     <Compile Include="SshClientLibraryTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Samples\small-file.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Samples\small-file.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
